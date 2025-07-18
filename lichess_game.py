@@ -1,5 +1,4 @@
 import random
-import struct
 import time
 from collections.abc import Awaitable, Callable, Iterable
 from itertools import islice
@@ -269,12 +268,7 @@ class Lichess_Game:
             return
 
         for name, book_reader in self.book_settings.readers.items():
-            try:
-                entries = list(book_reader.find_all(self.board))
-            except struct.error:
-                print(f'Skipping book "{name}" due to error.')
-                continue
-
+            entries = list(book_reader.find_all(self.board))
             if not entries:
                 continue
 
@@ -868,7 +862,8 @@ class Lichess_Game:
 
         if self.config.online_moves.lichess_cloud.enabled:
             if not self.config.online_moves.lichess_cloud.only_without_book or not self.book_settings.readers:
-                opening_sources[self._make_cloud_move] = self.config.online_moves.lichess_cloud.priority
+                if self.board.uci_variant == 'chess' or self.config.online_moves.lichess_cloud.use_for_variants:
+                    opening_sources[self._make_cloud_move] = self.config.online_moves.lichess_cloud.priority
 
         if self.config.online_moves.chessdb.enabled:
             if not self.config.online_moves.chessdb.only_without_book or not self.book_settings.readers:

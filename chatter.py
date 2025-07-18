@@ -74,12 +74,7 @@ class Chatter:
 
         if self.spectator_goodbye:
             await self.api.send_chat_message(self.game_info.id_, 'spectator', self.spectator_goodbye)
-
-    async def send_abortion_message(self) -> None:
-        await self.api.send_chat_message(self.game_info.id_, 'player', ('Too bad you weren\'t there. '
-                                                                        'Feel free to challenge me again, '
-                                                                        'I will accept the challenge if possible.'))
-
+                                                                                                                                             
     async def _handle_command(self, chat_message: Chat_Message) -> None:
         match chat_message.text[1:].lower():
             case 'cpu':
@@ -112,7 +107,7 @@ class Chatter:
                     return
 
                 if not (message := self._append_pv()):
-                    message = 'No PV available.'
+                    message = 'No modules available.'
 
                 await self.api.send_chat_message(self.game_info.id_, chat_message.room, message)
             case 'ram':
@@ -165,16 +160,16 @@ class Chatter:
 
     def _get_draw_message(self, config: Config) -> str:
         if not config.offer_draw.enabled:
-            return 'This bot will neither accept nor offer draws.'
+            return 'I will neither accept nor offer draws.'
 
         max_score = config.offer_draw.score / 100
 
-        return (f'The bot offers draw at move {config.offer_draw.min_game_length} or later '
+        return (f'I will accept/offer draws after move {config.offer_draw.min_game_length}'
                 f'if the eval is within +{max_score:.2f} to -{max_score:.2f} for the last '
                 f'{config.offer_draw.consecutive_moves} moves.')
 
     def _get_name_message(self, version: str) -> str:
-        return (f'{self.username} running {self.lichess_game.engine.name} (BotLi {version})')
+        return (f'I use {self.lichess_game.engine.name} (BotLi {version})')
 
     def _format_message(self, message: str | None) -> str | None:
         if not message:
